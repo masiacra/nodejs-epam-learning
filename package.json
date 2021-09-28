@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/masiacra/nodejs-epam-learning/issues"
   },
-  "homepage": "https://github.com/masiacra/nodejs-epam-learning#readme"
+  "homepage": "https://github.com/masiacra/nodejs-epam-learning#readme",
+  "devDependencies": {
+    "nodemon": "2.0.13"
+  }
 }
