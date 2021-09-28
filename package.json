@@ -1,0 +1,24 @@
+{
+  "name": "nodejs-epam-learning",
+  "version": "1.0.0",
+  "description": "repository to do hometasks for epam node.js global mentoring",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masiacra/nodejs-epam-learning.git"
+  },
+  "keywords": [
+    "node.js",
+    "global",
+    "mentoring"
+  ],
+  "author": "Igor Savelev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/masiacra/nodejs-epam-learning/issues"
+  },
+  "homepage": "https://github.com/masiacra/nodejs-epam-learning#readme"
+}
