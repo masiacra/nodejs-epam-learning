@@ -11,5 +11,7 @@ module.exports = {
         sourceType: 'commonjs',
     },
     plugins: [],
-    rules: {},
+    rules: {
+        ['import/no-commonjs']: 'off',
+    },
 };
