@@ -4,6 +4,7 @@
   "description": "repository to do hometasks for epam node.js global mentoring",
   "main": "index.js",
   "scripts": {
+    "task1": "node ./src/reverse",
     "test": "",
     "precommit": "eslint .",
     "prepare": "husky install",
