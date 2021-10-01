@@ -1,3 +1,4 @@
+'use strict';
 const { createInterface } = require('readline');
 const { reverseString } = require('./helpers');
 

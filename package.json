@@ -4,11 +4,13 @@
   "description": "repository to do hometasks for epam node.js global mentoring",
   "main": "index.js",
   "scripts": {
-    "task1": "node ./src/reverse",
-    "test": "",
+    "create-hook": "husky add .husky/pre-commit \"npm test\"",
+    "lint": "eslint src",
     "precommit": "eslint .",
     "prepare": "husky install",
-    "create-hook": "husky add .husky/pre-commit \"npm test\""
+    "task1": "node ./src/reverse",
+    "task2": "node ./src/read-csv",
+    "test": ""
   },
   "repository": {
     "type": "git",
@@ -33,5 +35,8 @@
     "lint-staged": "11.1.2",
     "nodemon": "2.0.13",
     "prettier": "2.4.1"
+  },
+  "dependencies": {
+    "csvtojson": "2.0.10"
   }
 }

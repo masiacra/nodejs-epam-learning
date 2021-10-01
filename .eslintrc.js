@@ -14,4 +14,5 @@ module.exports = {
     rules: {
         ['import/no-commonjs']: 'off',
     },
+    ignorePatterns: ['node_modules'],
 };
