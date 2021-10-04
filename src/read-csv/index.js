@@ -1,8 +1,8 @@
 'use strict';
-
-const { createReadStream, createWriteStream } = require('fs');
-const csv = require('csvtojson');
-const { INPUT_FILEPATH, OUTPUT_FILEPATH } = require('./constants');
+import { createReadStream, createWriteStream, mkdir } from 'fs';
+import csv from 'csvtojson';
+import { INPUT_FILEPATH, OUTPUT_FILEPATH, TXT_DIR } from './constants';
+import { promisify } from 'util';
 
 const main = () => {
     const readStream = createReadStream(process.argv[2] || INPUT_FILEPATH, {
@@ -29,4 +29,6 @@ const main = () => {
     });
 };
 
-main();
+const promisifiedMkdir = promisify(mkdir);
+
+promisifiedMkdir(TXT_DIR).then(main).catch(console.error);

@@ -1,6 +1,6 @@
 'use strict';
-const { createInterface } = require('readline');
-const { reverseString } = require('./helpers');
+import { createInterface } from 'readline';
+import { reverseString } from './helpers';
 
 const main = () => {
     const readline = createInterface({

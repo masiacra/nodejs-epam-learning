@@ -1,6 +1,2 @@
 'use strict';
-const reverseString = (str) => str.split('').reverse().join('');
-
-module.exports = {
-    reverseString,
-};
+export const reverseString = (str) => str.split('').reverse().join('');

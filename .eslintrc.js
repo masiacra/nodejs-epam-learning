@@ -8,11 +8,12 @@ module.exports = {
     parserOptions: {
         ecmaFeatures: {},
         ecmaVersion: 12,
-        sourceType: 'commonjs',
+        sourceType: 'module',
     },
     plugins: [],
     rules: {
         ['import/no-commonjs']: 'off',
+        ['import/prefer-default-export']: 'off',
     },
     ignorePatterns: ['node_modules'],
 };
