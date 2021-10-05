@@ -1,15 +1,13 @@
 'use strict';
-import { createInterface } from 'readline';
 import { reverseString } from './helpers';
 
 const main = () => {
-    const readline = createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
+    process.stdin.on('data', (data) => {
+        const inputString = data.toString();
 
-    readline.on('line', (chunk) => {
-        console.log(reverseString(chunk));
+        console.log(
+            reverseString(inputString.slice(0, inputString.length - 1)),
+        );
     });
 };
 
