@@ -4,7 +4,14 @@
   "description": "repository to do hometasks for epam node.js global mentoring",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel ./src/index.js -d dist",
+    "create-hook": "husky add .husky/pre-commit \"npm test\"",
+    "lint": "eslint src",
+    "precommit": "eslint .",
+    "prepare": "husky install",
+    "task1": "babel ./src/reverse/ -d dist && nodemon ./dist",
+    "task2": "babel ./src/read-csv/ -d dist && nodemon ./dist",
+    "test": ""
   },
   "repository": {
     "type": "git",
@@ -20,5 +27,20 @@
   "bugs": {
     "url": "https://github.com/masiacra/nodejs-epam-learning/issues"
   },
-  "homepage": "https://github.com/masiacra/nodejs-epam-learning#readme"
+  "homepage": "https://github.com/masiacra/nodejs-epam-learning#readme",
+  "devDependencies": {
+    "@babel/cli": "7.15.7",
+    "@babel/core": "7.15.5",
+    "@babel/preset-env": "7.15.6",
+    "eslint": "7.32.0",
+    "eslint-config-node": "4.1.0",
+    "eslint-config-prettier": "8.3.0",
+    "husky": "7.0.2",
+    "lint-staged": "11.1.2",
+    "nodemon": "2.0.13",
+    "prettier": "2.4.1"
+  },
+  "dependencies": {
+    "csvtojson": "2.0.10"
+  }
 }
