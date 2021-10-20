@@ -1,10 +1,18 @@
 import express, { Request, Response } from 'express';
+import { userRouter } from './routes/user-route';
+import { usersRouter } from './routes/users-route';
 
 const app = express();
-const port = 3000;
+const PORT = 4000;
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello world 2');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (_: Request, response: Response) => {
+    response.json({ message: 'This is the main page' });
 });
 
-app.listen(port, () => console.log('server is running'));
+app.use('/user', userRouter);
+app.use('/users', usersRouter);
+
+app.listen(PORT, () => console.log(`server is running on port ${PORT}`));
