@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { promisify } from 'util';
-import { StatusCodes } from '../common-types';
+import { StatusCodesEnum } from '../common-types';
 import { dataBase, userAlreadyExistsError } from '../models/model-database';
 import { createUser, updateUser, deleteUser } from '../models/model-user';
 
@@ -18,7 +18,7 @@ const handleGetUser = async (
 
         if (!user) {
             response
-                .status(StatusCodes.NotFound)
+                .status(StatusCodesEnum.NotFound)
                 .json({ message: `User with id=${id} not found` });
             return;
         }
@@ -27,7 +27,7 @@ const handleGetUser = async (
     } catch (error) {
         console.error(error);
         response
-            .status(StatusCodes.InternalServerError)
+            .status(StatusCodesEnum.InternalServerError)
             .json({ message: 'Sorry. Some problems with server' });
     }
 };
@@ -38,7 +38,7 @@ const handlePostUser = async (
 ) => {
     if (!login || !password || !age) {
         response
-            .status(StatusCodes.NotAcceptable)
+            .status(StatusCodesEnum.NotAcceptable)
             .json({ message: 'Incorrect login or password or age!' });
         return;
     }
@@ -47,18 +47,18 @@ const handlePostUser = async (
     try {
         await promisifiedAddUser(user);
         response
-            .status(StatusCodes.OK)
+            .status(StatusCodesEnum.OK)
             .json({ message: 'User sucessfully added' });
     } catch (error) {
         if (error === userAlreadyExistsError) {
             response
-                .status(StatusCodes.Conflict)
+                .status(StatusCodesEnum.Conflict)
                 .json({ message: (error as Error).message });
             return;
         }
         console.error(error);
         response
-            .status(StatusCodes.InternalServerError)
+            .status(StatusCodesEnum.InternalServerError)
             .json({ message: 'Sorry. Some problems with server' });
     }
 };
@@ -69,14 +69,14 @@ const handlePutUser = async (
 ) => {
     if (!id) {
         response
-            .status(StatusCodes.NotAcceptable)
+            .status(StatusCodesEnum.NotAcceptable)
             .json({ message: 'Please, send user id' });
         return;
     }
     try {
         const oldUser = await promisifiedFindUserById(id);
         if (!oldUser) {
-            response.status(StatusCodes.NotFound).json({
+            response.status(StatusCodesEnum.NotFound).json({
                 message: `Sorry we can't find user with id ${id}`,
             });
             return;
@@ -86,12 +86,12 @@ const handlePutUser = async (
         await promisifiedUpdateInDb(newUser, login);
 
         response
-            .status(StatusCodes.OK)
+            .status(StatusCodesEnum.OK)
             .json({ message: 'User sucessfully updated' });
     } catch (error) {
         console.error(error);
         response
-            .status(StatusCodes.InternalServerError)
+            .status(StatusCodesEnum.InternalServerError)
             .json({ message: 'Sorry. Some problems with server' });
     }
 };
@@ -102,7 +102,7 @@ const handleDeleteUser = async (
 ) => {
     if (!id) {
         response
-            .status(StatusCodes.NotAcceptable)
+            .status(StatusCodesEnum.NotAcceptable)
             .json({ message: 'Please, send user id' });
         return;
     }
@@ -110,7 +110,7 @@ const handleDeleteUser = async (
     try {
         const user = await promisifiedFindUserById(id);
         if (!user) {
-            response.status(StatusCodes.NotFound).json({
+            response.status(StatusCodesEnum.NotFound).json({
                 message: `Sorry we can't find user with id ${id}`,
             });
             return;
@@ -123,7 +123,7 @@ const handleDeleteUser = async (
     } catch (error) {
         console.error(error);
         response
-            .status(StatusCodes.InternalServerError)
+            .status(StatusCodesEnum.InternalServerError)
             .json({ message: 'Sorry. Some problems with server' });
     }
 };

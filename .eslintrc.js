@@ -1,12 +1,10 @@
 module.exports = {
-    parser: 'babel-eslint',
-    plugins: [],
+    root: true,
+    parser: '@typescript-eslint/parser',
+    plugins: ['@typescript-eslint', 'prettier'],
+    extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
     env: {
-        browser: true,
         node: true,
-        jasmine: true,
-        es6: true,
-        jest: true,
     },
     parserOptions: {
         ecmaFeatures: {
@@ -31,7 +29,6 @@ module.exports = {
     rules: {
         'no-debugger': 1,
         // Possible errors
-        'comma-dangle': [2, 'never'],
         'no-cond-assign': [2, 'always'],
         'no-constant-condition': 2,
         'no-control-regex': 2,
@@ -135,10 +132,12 @@ module.exports = {
         'no-delete-var': 2,
         'no-label-var': 2,
         'no-shadow-restricted-names': 2,
-        'no-shadow': 2,
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': ['error'],
         'no-undef-init': 2,
         'no-undef': 2,
-        'no-unused-vars': 2,
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': ['error'],
         // Node.js
         'callback-return': 2,
         'no-mixed-requires': 2,
@@ -184,17 +183,6 @@ module.exports = {
             },
         ],
         'linebreak-style': 0,
-        'max-len': [
-            2,
-            200,
-            4,
-            {
-                ignoreUrls: true,
-                ignoreComments: false,
-                ignorePattern:
-                    '^\\s*(const|let|var)\\s+\\w+\\s+\\=\\s+\\/.*\\/(|i|g|m|ig|im|gm|igm);?$',
-            },
-        ],
         'max-nested-callbacks': [2, 4],
         'new-parens': 2,
         'no-array-constructor': 2,

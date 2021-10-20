@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { promisify } from 'util';
-import { StatusCodes } from '../common-types';
+import { StatusCodesEnum } from '../common-types';
 import { dataBase } from '../models/model-database';
 import { getLimit } from '../helpers/getLimit';
 
@@ -14,14 +14,14 @@ const handleGetUsers = async (
 ) => {
     if (!login) {
         response
-            .status(StatusCodes.BadRequest)
+            .status(StatusCodesEnum.BadRequest)
             .json({ message: 'Please, send login!' });
         return;
     }
 
     if (typeof login !== 'string') {
         response
-            .status(StatusCodes.BadRequest)
+            .status(StatusCodesEnum.BadRequest)
             .json({ message: 'Invalid request!' });
         return;
     }
@@ -36,7 +36,7 @@ const handleGetUsers = async (
     } catch (error) {
         console.error(error);
         response
-            .status(StatusCodes.InternalServerError)
+            .status(StatusCodesEnum.InternalServerError)
             .json({ message: 'Sorry. Some problems with server' });
     }
 };

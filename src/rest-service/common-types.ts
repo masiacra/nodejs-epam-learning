@@ -8,7 +8,7 @@ export interface User {
     isDeleted: boolean;
 }
 
-export enum StatusCodes {
+export enum StatusCodesEnum {
     OK = 200,
     BadRequest = 400,
     NotFound = 404,
