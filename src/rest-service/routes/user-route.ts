@@ -3,6 +3,8 @@ import { promisify } from 'util';
 import { StatusCodesEnum } from '../common-types';
 import { dataBase, userAlreadyExistsError } from '../models/model-database';
 import { createUser, updateUser, deleteUser } from '../models/model-user';
+import { userCreateSheme, userUpdateSheme } from '../validation/user-sheme';
+import { validateSheme } from '../validation/validate-sheme';
 
 const promisifiedFindUserById = promisify(dataBase.findUserById);
 const promisifiedAddUser = promisify(dataBase.addUser);
@@ -36,19 +38,13 @@ const handlePostUser = async (
     { body: { login, password, age } }: Request,
     response: Response,
 ) => {
-    if (!login || !password || !age) {
-        response
-            .status(StatusCodesEnum.NotAcceptable)
-            .json({ message: 'Incorrect login or password or age!' });
-        return;
-    }
     const user = createUser(login, password, age);
 
     try {
         await promisifiedAddUser(user);
         response
             .status(StatusCodesEnum.OK)
-            .json({ message: 'User sucessfully added' });
+            .json({ message: 'User sucessfully added', user });
     } catch (error) {
         if (error === userAlreadyExistsError) {
             response
@@ -87,7 +83,7 @@ const handlePutUser = async (
 
         response
             .status(StatusCodesEnum.OK)
-            .json({ message: 'User sucessfully updated' });
+            .json({ message: 'User sucessfully updated', user: newUser });
     } catch (error) {
         console.error(error);
         response
@@ -119,7 +115,7 @@ const handleDeleteUser = async (
 
         await promisifiedRemoveUser(deletedUser);
 
-        response.json({ message: 'User has been successfully deleted' });
+        response.json({ message: 'User has been successfully deleted', user });
     } catch (error) {
         console.error(error);
         response
@@ -130,6 +126,6 @@ const handleDeleteUser = async (
 
 export const userRouter = Router();
 userRouter.get('/:id', handleGetUser);
-userRouter.post('/', handlePostUser);
-userRouter.put('/:id', handlePutUser);
+userRouter.post('/', validateSheme(userCreateSheme), handlePostUser);
+userRouter.put('/:id', validateSheme(userUpdateSheme), handlePutUser);
 userRouter.delete('/:id', handleDeleteUser);

@@ -175,13 +175,6 @@ module.exports = {
                 allowArrowFunctions: true,
             },
         ],
-        indent: [
-            2,
-            4,
-            {
-                SwitchCase: 1,
-            },
-        ],
         'linebreak-style': 0,
         'max-nested-callbacks': [2, 4],
         'new-parens': 2,
