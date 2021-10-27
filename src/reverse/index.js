@@ -1,4 +1,3 @@
-'use strict';
 import { reverseString } from './helpers';
 
 const main = () => {

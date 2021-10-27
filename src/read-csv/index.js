@@ -1,4 +1,3 @@
-'use strict';
 import { createReadStream, createWriteStream, mkdir } from 'fs';
 import csv from 'csvtojson';
 import { INPUT_FILEPATH, OUTPUT_FILEPATH, TXT_DIR } from './constants';
