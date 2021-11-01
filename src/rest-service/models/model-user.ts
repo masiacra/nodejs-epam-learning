@@ -1,17 +1,4 @@
-import { User } from '../common-types';
-import { createId } from '../helpers/createId';
-
-export const createUser = (
-    login: string,
-    password: string,
-    age: number,
-): User => ({
-    id: createId(),
-    login,
-    password,
-    age,
-    isDeleted: false,
-});
+import { User } from '../types/user.types';
 
 export const deleteUser = (user: User): User => ({
     ...user,

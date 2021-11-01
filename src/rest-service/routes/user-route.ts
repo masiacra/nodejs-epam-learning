@@ -1,22 +1,19 @@
 import { Router, Request, Response } from 'express';
-import { promisify } from 'util';
-import { StatusCodesEnum } from '../common-types';
-import { dataBase, userAlreadyExistsError } from '../models/model-database';
-import { createUser, updateUser, deleteUser } from '../models/model-user';
+import { StatusCodesEnum } from '../types/common-types';
+import { UniqueConstraintError } from 'sequelize';
+import { updateUser, deleteUser } from '../models/model-user';
 import { userCreateSheme, userUpdateSheme } from '../validation/user-sheme';
 import { validateSheme } from '../validation/validate-sheme';
-
-const promisifiedFindUserById = promisify(dataBase.findUserById);
-const promisifiedAddUser = promisify(dataBase.addUser);
-const promisifiedUpdateInDb = promisify(dataBase.updateUserInDb);
-const promisifiedRemoveUser = promisify(dataBase.removeUser);
+import { Users } from '../config/database.config';
+import { userMapper } from '../mappers/user.mapper';
+import { createId } from '../helpers/createId';
 
 const handleGetUser = async (
     { params: { id } }: Request,
     response: Response,
 ) => {
     try {
-        const user = await promisifiedFindUserById(id);
+        const user = await Users.findByPk(id);
 
         if (!user) {
             response
@@ -25,7 +22,7 @@ const handleGetUser = async (
             return;
         }
 
-        response.json(user);
+        response.json(userMapper(user));
     } catch (error) {
         console.error(error);
         response
@@ -38,15 +35,20 @@ const handlePostUser = async (
     { body: { login, password, age } }: Request,
     response: Response,
 ) => {
-    const user = createUser(login, password, age);
-
     try {
-        await promisifiedAddUser(user);
+        const user = await Users.create({
+            id: createId(),
+            login,
+            password,
+            age,
+            is_deleted: false,
+        });
+
         response
             .status(StatusCodesEnum.OK)
             .json({ message: 'User sucessfully added', user });
     } catch (error) {
-        if (error === userAlreadyExistsError) {
+        if (error instanceof UniqueConstraintError) {
             response
                 .status(StatusCodesEnum.Conflict)
                 .json({ message: (error as Error).message });
@@ -70,20 +72,31 @@ const handlePutUser = async (
         return;
     }
     try {
-        const oldUser = await promisifiedFindUserById(id);
+        const oldUser = await Users.findByPk(id);
+
         if (!oldUser) {
             response.status(StatusCodesEnum.NotFound).json({
                 message: `Sorry we can't find user with id ${id}`,
             });
             return;
         }
-        const newUser = updateUser(oldUser, login, password, age);
 
-        await promisifiedUpdateInDb(newUser, login);
+        const [resultOfOperation] = await Users.update(
+            { login, password, age },
+            { where: { id } },
+        );
+
+        if (resultOfOperation === 1) {
+            response.status(StatusCodesEnum.OK).json({
+                message: 'User sucessfully updated',
+                user: updateUser(userMapper(oldUser), login, password, age),
+            });
+            return;
+        }
 
         response
-            .status(StatusCodesEnum.OK)
-            .json({ message: 'User sucessfully updated', user: newUser });
+            .status(StatusCodesEnum.InternalServerError)
+            .json({ message: 'Sorry. Some problems with server' });
     } catch (error) {
         console.error(error);
         response
@@ -104,18 +117,29 @@ const handleDeleteUser = async (
     }
 
     try {
-        const user = await promisifiedFindUserById(id);
+        const user = await Users.findByPk(id);
         if (!user) {
             response.status(StatusCodesEnum.NotFound).json({
                 message: `Sorry we can't find user with id ${id}`,
             });
             return;
         }
-        const deletedUser = deleteUser(user);
+        const [resultOfOperation] = await Users.update(
+            { is_deleted: true },
+            { where: { id } },
+        );
 
-        await promisifiedRemoveUser(deletedUser);
+        if (resultOfOperation === 1) {
+            response.json({
+                message: 'User has been successfully deleted',
+                user: deleteUser(userMapper(user)),
+            });
+            return;
+        }
 
-        response.json({ message: 'User has been successfully deleted', user });
+        response
+            .status(StatusCodesEnum.InternalServerError)
+            .json({ message: 'Sorry. Some problems with server' });
     } catch (error) {
         console.error(error);
         response

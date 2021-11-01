@@ -1,10 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { promisify } from 'util';
-import { StatusCodesEnum } from '../common-types';
-import { dataBase } from '../models/model-database';
+import { Op } from 'sequelize';
+import { StatusCodesEnum } from '../types/common-types';
 import { getLimit } from '../helpers/getLimit';
-
-const promisifiedGetAutoSuggestUsers = promisify(dataBase.getAutoSuggestUsers);
+import { userMapper } from '../mappers/user.mapper';
+import { Users } from '../config/database.config';
 
 export const usersRouter = Router();
 
@@ -27,12 +26,12 @@ const handleGetUsers = async (
     }
 
     try {
-        const users = await promisifiedGetAutoSuggestUsers(
-            login,
-            getLimit(limit as string),
-        );
+        const users = await Users.findAll({
+            where: { login: { [Op.startsWith]: login } },
+            limit: getLimit(limit as string),
+        });
 
-        response.json({ users });
+        response.json({ users: users.map(userMapper) });
     } catch (error) {
         console.error(error);
         response

@@ -1,18 +1,37 @@
 import express, { Request, Response } from 'express';
 import { userRouter } from './routes/user-route';
 import { usersRouter } from './routes/users-route';
+import { PORT } from './config/app.config';
+import { sequelize } from './config/database.config';
+import { ROUTES } from './config/routes.config';
 
-const app = express();
-const PORT = 4000;
+const application = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+application.use(express.json());
+application.use(express.urlencoded({ extended: true }));
 
-app.get('/', (_: Request, response: Response) => {
+application.get('/', (_: Request, response: Response) => {
     response.json({ message: 'This is the main page' });
 });
 
-app.use('/user', userRouter);
-app.use('/users', usersRouter);
+application.use(ROUTES.user, userRouter);
+application.use(ROUTES.users, usersRouter);
 
-app.listen(PORT, () => console.log(`server is running on port ${PORT}`));
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log(
+            'Connection with database has been established sucessfully.',
+        );
+        application.listen(PORT, () =>
+            console.log(`server is running on port ${PORT}`),
+        );
+    })
+    .catch((error) => {
+        console.error('Unable to connect to the database:', error);
+        process.exit(1);
+    });
+
+process.on('SIGTERM', () => {
+    sequelize.close();
+});

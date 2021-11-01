@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ObjectSchema, ValidationErrorItem } from 'joi';
-import { StatusCodesEnum } from '../common-types';
+import { StatusCodesEnum } from '../types/common-types';
 
 const getErrorResponseObject = (shemaErrors: ValidationErrorItem[]) => {
     const errors = shemaErrors.map((error) => ({

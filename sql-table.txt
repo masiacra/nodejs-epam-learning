@@ -1,0 +1,14 @@
+CREATE TABLE users (
+    id varchar(100) NOT NULL UNIQUE, 
+    login varchar(30) NOT NULL UNIQUE, 
+    password varchar(30) NOT NULL, 
+    age int NOT NULL, 
+    is_deleted bool DEFAULT FALSE
+);
+ALTER TABLE users ADD PRIMARY KEY (id);
+
+INSERT INTO users VALUES ('1','Naruto', 'qwerty', 21);
+INSERT INTO users VALUES ('2','Sasuke', 'abc', 20);
+INSERT INTO users VALUES ('3','Shrek', 'abc2', 100);
+INSERT INTO users VALUES ('4', 'Donkey', 'xyz', 12);
+INSERT INTO users VALUES ('5', 'Fiona', 'xyz2', 30);
