@@ -1,8 +1,15 @@
 import { DataTypes, Sequelize } from 'sequelize';
-import { UserInstance } from '../types/database.types';
 import { config } from 'dotenv';
+import { UserInstance } from '../types/database.types';
 
 config();
+
+// some problem with global interfaces
+declare const process: {
+    env: {
+        [key: string]: string;
+    };
+};
 
 export const sequelize = new Sequelize(
     process.env.DB_NAME,

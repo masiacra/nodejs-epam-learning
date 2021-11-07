@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run build:live",
     "build": "tsc -p .",
-    "build:live": "nodemon --watch 'src/rest-service/**/*.ts' --exec \"ts-node\" src/rest-service/index.ts",
+    "build:live": "nodemon --watch 'src/rest-service/**/*.ts' --exec \"ts-node\" src/rest-service/app.ts",
     "create-hook": "husky add .husky/pre-commit \"npm test\"",
     "lint": "eslint src",
     "precommit": "eslint .",
