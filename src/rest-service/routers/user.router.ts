@@ -1,127 +1,129 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { StatusCodesEnum } from '../types/application.types';
 import {
-    userCreateSheme,
-    userUpdateSheme,
-    idParamsSheme,
-} from '../validation/user-sheme';
-import { validateSheme } from '../validation/validate-sheme';
-import { userService } from '../services/user.service';
+    USER_CREATE_SCHEME_CONFIG,
+    USER_UPDATE_SCHEME_CONFIG,
+} from '../validation/user-scheme';
+import { VALIDATE_ID_SCHEME_CONFIG } from '../validation/id-scheme';
+import { validateScheme } from '../validation/validate-scheme';
+import {
+    findUserService,
+    createUserService,
+    updateUserService,
+    deleteUserService,
+} from '../services/user.service';
 
 const internalProblem = new Error('Sorry. Some propblems with server');
 
-const userController = {
-    async handleGetUser(
-        { params: { id } }: Request,
-        response: Response,
-        next: NextFunction,
-    ) {
-        try {
-            const { user } = await userService.findUser(id);
+export const handleGetUser = async (
+    { params: { id } }: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    try {
+        const { user } = await findUserService(id);
 
-            if (!user) {
-                response
-                    .status(StatusCodesEnum.NotFound)
-                    .json({ message: `User with id=${id} not found` });
-
-                return;
-            }
-
-            response.json(user);
-        } catch (error) {
-            next(error);
-            return;
-        }
-    },
-
-    async handlePostUser(
-        { body: { login, password, age } }: Request,
-        response: Response,
-        next: NextFunction,
-    ) {
-        try {
-            const { user } = await userService.createUser(login, password, age);
-
+        if (!user) {
             response
-                .status(StatusCodesEnum.OK)
-                .json({ message: 'User sucessfully added', user });
-        } catch (error) {
-            next(error);
+                .status(StatusCodesEnum.NotFound)
+                .json({ message: `User with id=${id} not found` });
+
             return;
         }
-    },
 
-    async handlePutUser(
-        { params: { id }, body: { login, password, age } }: Request,
-        response: Response,
-        next: NextFunction,
-    ) {
-        try {
-            const { code } = await userService.updateUser(
-                id,
-                login,
-                password,
-                age,
-            );
+        response.json(user);
+    } catch (error) {
+        next(error);
+        return;
+    }
+};
 
-            if (code) {
-                response.status(StatusCodesEnum.OK).json({
-                    message: `User with id=${id} sucessfully updated`,
-                });
-                return;
-            }
+export const handlePostUser = async (
+    { body: { login, password, age } }: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    try {
+        const { user } = await createUserService({
+            login,
+            password,
+            age,
+        });
 
-            next(internalProblem);
-            return;
-        } catch (error) {
-            next(error);
-            return;
-        }
-    },
+        response
+            .status(StatusCodesEnum.OK)
+            .json({ message: 'User sucessfully added', user });
+    } catch (error) {
+        next(error);
+        return;
+    }
+};
 
-    async handleDeleteUser(
-        { params: { id } }: Request,
-        response: Response,
-        next: NextFunction,
-    ) {
-        try {
-            const { code } = await userService.deleteUser(id);
-
-            if (code) {
-                response.json({
-                    message: `User with id=${id} has been successfully deleted`,
-                });
-                return;
-            }
-
-            next(internalProblem);
-            return;
-        } catch (error) {
-            next(error);
+export const handlePutUser = async (
+    { params: { id }, body: { login, password, age } }: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    try {
+        const { code } = await updateUserService(id, {
+            login,
+            password,
+            age,
+        });
+        if (code) {
+            response.status(StatusCodesEnum.OK).json({
+                message: `User with id=${id} sucessfully updated`,
+            });
             return;
         }
-    },
+
+        next(internalProblem);
+        return;
+    } catch (error) {
+        next(error);
+        return;
+    }
+};
+
+export const handleDeleteUser = async (
+    { params: { id } }: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    try {
+        const { code } = await deleteUserService(id);
+
+        if (code) {
+            response.json({
+                message: `User with id=${id} has been successfully deleted`,
+            });
+            return;
+        }
+
+        next(internalProblem);
+        return;
+    } catch (error) {
+        next(error);
+        return;
+    }
 };
 
 export const userRouter = Router();
 
 userRouter.get(
     '/:id',
-    validateSheme(idParamsSheme, undefined),
-    userController.handleGetUser,
+    validateScheme(VALIDATE_ID_SCHEME_CONFIG),
+    handleGetUser,
 );
-userRouter.post(
-    '/',
-    validateSheme(undefined, userCreateSheme),
-    userController.handlePostUser,
-);
+
+userRouter.post('/', validateScheme(USER_CREATE_SCHEME_CONFIG), handlePostUser);
 userRouter.put(
     '/:id',
-    validateSheme(idParamsSheme, userUpdateSheme),
-    userController.handlePutUser,
+    validateScheme(USER_UPDATE_SCHEME_CONFIG),
+    handlePutUser,
 );
 userRouter.delete(
     '/:id',
-    validateSheme(idParamsSheme, undefined),
-    userController.handleDeleteUser,
+    validateScheme(VALIDATE_ID_SCHEME_CONFIG),
+    handleDeleteUser,
 );

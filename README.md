@@ -12,7 +12,7 @@ postgres on your computer
 
 # How to use
 
-1. use lines from sql-table.txt to create new table which called "users"
+1. use lines from sql-tables.txt to create new tables which called "users" and "groups"
 2. create .env file in which define DB_NAME, DB_HOST, DB_USER, DB_PASSWORD
 3. npm run start
 4. add user by send post request to http://localhost:4000/user

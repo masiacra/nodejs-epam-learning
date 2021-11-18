@@ -1,70 +1,65 @@
-import { randomUUID } from 'crypto';
-import { Id } from '../types/user.types';
+import { Id } from '../types/common.types';
 import {
-    userTableWrapper,
-    UserTableWrapper,
-} from '../data-access/user.data-access';
+    dataFindUserById,
+    dataCreateUser,
+    dataUpdateUser,
+    dataGetLimitUsers,
+} from '../data-access/users.data-access';
 import { DEFAULT_LIMIT } from '../config/application.config';
-import { userDataMapper, UserDataMapper } from '../mappers/user.mapper';
+import { toDataAccess, fromDataAccess } from '../mappers/user.mapper';
+import {
+    createCreateService,
+    createFindService,
+    createUpdateService,
+} from './common.service';
+import { User } from '../types/user.types';
+import { UserAttributes } from '../types/database.types';
 
-class UserService {
-    private dataAccess: UserTableWrapper;
-    private mapper: UserDataMapper;
+export const findUserService = async (
+    id: Id,
+): Promise<{ user: User | null }> => {
+    const { resultObject } = await createFindService(dataFindUserById)(id);
 
-    constructor(dataAccess: UserTableWrapper, mapper: UserDataMapper) {
-        this.dataAccess = dataAccess;
-        this.mapper = mapper;
-    }
+    return !!resultObject
+        ? { user: fromDataAccess(resultObject) }
+        : { user: null };
+};
 
-    async createUser(login: string, password: string, age: number) {
-        const user = {
-            id: this.createId(),
-            login,
-            password,
-            age,
-            isDeleted: false,
-        };
-        await this.dataAccess.create(this.mapper.toDataAccess(user));
+export const createUserService = async (
+    params: Pick<User, 'login' | 'password' | 'age'>,
+) => {
+    const { resultObject: user } = await createCreateService(
+        dataCreateUser,
+        toDataAccess,
+    )(params);
 
-        return { user };
-    }
+    return { user: fromDataAccess(user) };
+};
 
-    async updateUser(id: Id, login: string, password: string, age: number) {
-        const code = await this.dataAccess.update(id, login, password, age);
+export const updateUserService = createUpdateService(dataUpdateUser);
 
-        return code;
-    }
+export const deleteUserService = async (id: Id) => {
+    const result = await updateUserService(id, { is_deleted: true });
 
-    async deleteUser(id: string) {
-        const result = await this.dataAccess.delete(id);
+    return result;
+};
 
-        return result;
-    }
-
-    async findUser(id: string) {
-        const { user } = await this.dataAccess.findById(id);
-
-        return !!user && !user.is_deleted
-            ? { user: this.mapper.fromDataAccess(user) }
-            : { user: null };
-    }
-
-    async getLimitUsers(login: string, limit?: number) {
-        const { users } = await this.dataAccess.getLimitUsers(
+const createGetLimitUsers =
+    (
+        dataAccessFunction: (
+            login: string,
+            limit: number,
+        ) => Promise<{ users: UserAttributes[]; error: Error | null }>,
+    ) =>
+    async (login: string, limit?: number) => {
+        const { users } = await dataAccessFunction(
             login,
             limit || DEFAULT_LIMIT,
         );
 
         return {
-            users: users
-                .filter((user) => !user.is_deleted)
-                .map((user) => this.mapper.fromDataAccess(user)),
+            users: users.map((user) => fromDataAccess(user)),
         };
-    }
+    };
 
-    createId(): Id {
-        return randomUUID();
-    }
-}
-
-export const userService = new UserService(userTableWrapper, userDataMapper);
+export const getLimitUsersService = createGetLimitUsers(dataGetLimitUsers);
