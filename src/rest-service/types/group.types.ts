@@ -13,3 +13,5 @@ export interface Group {
     name: string;
     permissions: Permission[];
 }
+
+export type PartialGroup = Partial<Group>;

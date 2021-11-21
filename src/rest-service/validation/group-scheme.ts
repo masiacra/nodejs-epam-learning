@@ -16,6 +16,7 @@ export const groupCreateScheme = Joi.object().keys({
             ),
         )
         .required(),
+    usersIds: Joi.array().items(Joi.string()).optional(),
 });
 
 export const groupUpdateScheme = Joi.object()
@@ -32,6 +33,7 @@ export const groupUpdateScheme = Joi.object()
                 ),
             )
             .optional(),
+        usersIds: Joi.array().items(Joi.string()).optional(),
     })
     .or('name', 'permissions');
 

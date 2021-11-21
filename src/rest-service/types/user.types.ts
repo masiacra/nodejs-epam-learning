@@ -7,3 +7,5 @@ export interface User {
     age: number;
     isDeleted: boolean;
 }
+
+export type PartialUser = Partial<User>;

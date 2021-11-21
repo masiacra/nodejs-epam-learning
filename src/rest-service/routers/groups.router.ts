@@ -6,14 +6,14 @@ const handleGetGroups = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { groups, error } = await getAllGroupsService();
+    try {
+        const { groups } = await getAllGroupsService();
 
-    if (error) {
+        response.json(groups);
+    } catch (error) {
         next(error);
         return;
     }
-
-    response.json(groups);
 };
 
 export const groupsRouter = Router();

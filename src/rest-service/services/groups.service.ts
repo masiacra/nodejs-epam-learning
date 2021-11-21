@@ -1,86 +1,85 @@
 import { randomUUID } from 'crypto';
-import { Group } from '../types/group.types';
+import { Group, PartialGroup } from '../types/group.types';
 import { Permission } from '../types/group.types';
 import {
-    createCreateService,
-    createDeleteService,
-    createUpdateService,
-    createFindService,
-} from './common.service';
-import {
     dataFindGroupById,
-    dataCreateGroup,
-    dataUpdateGroup,
     dataDeleteGroup,
     dataGetAllGroups,
-    dataAddUsersToGroup,
+    dataCreateGroupWithTransaction,
+    dataUpdateGroupWithTransaction,
 } from '../data-access/groups.data-access';
-import { sequelize } from '../config/database.config';
 import { Id } from '../types/common.types';
 
-export const findGroupService = createFindService(dataFindGroupById);
+export const findGroupService = async (id: Id) => {
+    const { resultObject } = await dataFindGroupById(id);
 
-const createGroupParamsTransformer = ({
+    return { group: resultObject };
+};
+
+const createGroup = ({
     name,
     permissions,
 }: {
-    name?: string;
-    permissions?: Permission[];
+    name: string;
+    permissions: Permission[];
 }) => {
     return {
         id: randomUUID(),
-        name: name || '',
-        permissions: permissions || [],
+        name,
+        permissions,
     };
 };
 
-const addUsersToGroup = async (groupId: Id, usersIds: Id[]) => {
-    const result = await dataAddUsersToGroup(
-        usersIds.map((user_id) => ({ user_id, group_id: groupId })),
+const addUsersToGroup = (groupId: Id, usersIds: Id[]) => {
+    return usersIds.map((user_id) => ({ user_id, group_id: groupId }));
+};
+export const createGroupService = async ({
+    name,
+    permissions,
+    usersIds,
+}: {
+    name: string;
+    permissions: Permission[];
+    usersIds?: Id[];
+}) => {
+    const group = createGroup({ name, permissions });
+
+    const { resultObject } = await dataCreateGroupWithTransaction(
+        group,
+        usersIds ? addUsersToGroup(group.id, usersIds) : undefined,
+    );
+
+    return { resultObject };
+};
+
+export const updateGroupService = async ({
+    id,
+    name,
+    permissions,
+    usersIds,
+}: PartialGroup & { usersIds?: Id[]; id: Id }) => {
+    const result = await dataUpdateGroupWithTransaction(
+        {
+            id,
+            name,
+            permissions,
+        },
+        usersIds ? addUsersToGroup(id, usersIds) : undefined,
     );
 
     return result;
 };
 
-export const createGroupService = async (params: {
-    name?: string;
-    permissions?: Permission[];
-    usersIds?: Id[];
-}) => {
-    const transaction = await sequelize.transaction();
+export const deleteGroupService = async (id: Id) => {
+    await dataDeleteGroup(id);
 
-    const { resultObject, error } = await createCreateService(
-        dataCreateGroup,
-        createGroupParamsTransformer,
-    )(params);
-
-    if (error) {
-        transaction.rollback();
-        return { error };
-    }
-
-    const { error: _error } = await addUsersToGroup(
-        resultObject.id,
-        params.usersIds || [],
-    );
-
-    if (_error) {
-        transaction.rollback();
-        return { error };
-    }
-
-    return { error: null, resultObject };
+    return { code: 1 };
 };
-
-export const updateGroupService = createUpdateService(dataUpdateGroup);
-
-export const deleteGroupService = createDeleteService(dataDeleteGroup);
 
 const createGetAllGroupsService =
     (
         getAllGroups: () => Promise<{
             groups: Group[];
-            error: Error | null;
         }>,
     ) =>
     async () => {

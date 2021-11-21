@@ -21,7 +21,7 @@ export const handleGetGroup = async (
     next: NextFunction,
 ) => {
     try {
-        const { resultObject: group } = await findGroupService(id);
+        const { group } = await findGroupService(id);
 
         if (!group) {
             response
@@ -39,7 +39,7 @@ export const handleGetGroup = async (
 };
 
 const handlePostGroup = async (
-    { body: { name, permissions } }: Request,
+    { body: { name, permissions, usersIds } }: Request,
     response: Response,
     next: NextFunction,
 ) => {
@@ -47,6 +47,7 @@ const handlePostGroup = async (
         const { resultObject: group } = await createGroupService({
             name,
             permissions,
+            usersIds,
         });
 
         response
@@ -59,12 +60,14 @@ const handlePostGroup = async (
 };
 
 const handlePutGroup = async (
-    { params: { id }, body: { name, permissions } }: Request,
+    { params: { id }, body: { name, permissions, usersIds } }: Request,
     response: Response,
     next: NextFunction,
 ) => {
     try {
-        const { code } = await updateGroupService(id, {
+        const { code } = await updateGroupService({
+            usersIds,
+            id,
             name,
             permissions,
         });

@@ -115,7 +115,6 @@ userRouter.get(
     validateScheme(VALIDATE_ID_SCHEME_CONFIG),
     handleGetUser,
 );
-
 userRouter.post('/', validateScheme(USER_CREATE_SCHEME_CONFIG), handlePostUser);
 userRouter.put(
     '/:id',

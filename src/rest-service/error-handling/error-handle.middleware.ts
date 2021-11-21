@@ -51,5 +51,5 @@ export const errorHandleMiddleware = (
 
     response
         .status(StatusCodesEnum.InternalServerError)
-        .json({ message: 'Sorry, some problems with server' });
+        .json({ message: error.message });
 };

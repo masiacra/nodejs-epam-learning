@@ -5,6 +5,8 @@ import { Id } from './common.types';
 
 export type UserAttributes = Omit<User, 'isDeleted'> & { is_deleted: boolean };
 
+export type PartialUserAttributes = Partial<UserAttributes>;
+
 export interface UserInstance
     extends Model<UserAttributes, UserAttributes>,
         UserAttributes {}
