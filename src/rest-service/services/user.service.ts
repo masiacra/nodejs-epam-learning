@@ -1,17 +1,17 @@
 import { randomUUID } from 'crypto';
 import { Id } from '../types/user.types';
 import {
-    databaseWrapper,
-    DatabaseWrapper,
-} from '../data-access/database.data-access';
+    userTableWrapper,
+    UserTableWrapper,
+} from '../data-access/user.data-access';
 import { DEFAULT_LIMIT } from '../config/application.config';
 import { userDataMapper, UserDataMapper } from '../mappers/user.mapper';
 
 class UserService {
-    private dataAccess: DatabaseWrapper;
+    private dataAccess: UserTableWrapper;
     private mapper: UserDataMapper;
 
-    constructor(dataAccess: DatabaseWrapper, mapper: UserDataMapper) {
+    constructor(dataAccess: UserTableWrapper, mapper: UserDataMapper) {
         this.dataAccess = dataAccess;
         this.mapper = mapper;
     }
@@ -24,11 +24,9 @@ class UserService {
             age,
             isDeleted: false,
         };
-        const { error } = await this.dataAccess.create(
-            this.mapper.toDataAccess(user),
-        );
+        await this.dataAccess.create(this.mapper.toDataAccess(user));
 
-        return { user, error };
+        return { user };
     }
 
     async updateUser(id: Id, login: string, password: string, age: number) {
@@ -44,15 +42,15 @@ class UserService {
     }
 
     async findUser(id: string) {
-        const { user, error } = await this.dataAccess.findById(id);
+        const { user } = await this.dataAccess.findById(id);
 
         return !!user && !user.is_deleted
-            ? { user: this.mapper.fromDataAccess(user), error }
-            : { user: null, error };
+            ? { user: this.mapper.fromDataAccess(user) }
+            : { user: null };
     }
 
     async getLimitUsers(login: string, limit?: number) {
-        const { users, error } = await this.dataAccess.getLimitUsers(
+        const { users } = await this.dataAccess.getLimitUsers(
             login,
             limit || DEFAULT_LIMIT,
         );
@@ -61,7 +59,6 @@ class UserService {
             users: users
                 .filter((user) => !user.is_deleted)
                 .map((user) => this.mapper.fromDataAccess(user)),
-            error,
         };
     }
 
@@ -70,4 +67,4 @@ class UserService {
     }
 }
 
-export const userService = new UserService(databaseWrapper, userDataMapper);
+export const userService = new UserService(userTableWrapper, userDataMapper);

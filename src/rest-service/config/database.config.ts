@@ -1,6 +1,5 @@
-import { DataTypes, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import { config } from 'dotenv';
-import { UserInstance } from '../types/database.types';
 
 config();
 
@@ -22,16 +21,4 @@ export const sequelize = new Sequelize(
             timestamps: false,
         },
     },
-);
-
-export const Users = sequelize.define<UserInstance>(
-    'users',
-    {
-        id: { type: DataTypes.STRING(100), allowNull: false, primaryKey: true },
-        login: { type: DataTypes.STRING(30), allowNull: false },
-        password: { type: DataTypes.STRING(30), allowNull: false },
-        age: { type: DataTypes.INTEGER, allowNull: false },
-        is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
-    },
-    { tableName: 'users' },
 );

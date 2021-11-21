@@ -11,17 +11,17 @@ const usersController = {
         response: Response,
         next: NextFunction,
     ) {
-        const { users, error } = await userService.getLimitUsers(
-            login as string,
-            Number(limit),
-        );
+        try {
+            const { users } = await userService.getLimitUsers(
+                login as string,
+                Number(limit),
+            );
 
-        if (error) {
+            response.json({ users });
+        } catch (error) {
             next(error);
             return;
         }
-
-        response.json({ users });
     },
 };
 

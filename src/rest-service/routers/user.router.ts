@@ -16,24 +16,22 @@ const userController = {
         response: Response,
         next: NextFunction,
     ) {
-        // TODO: add id validation
+        try {
+            const { user } = await userService.findUser(id);
 
-        const { user, error } = await userService.findUser(id);
+            if (!user) {
+                response
+                    .status(StatusCodesEnum.NotFound)
+                    .json({ message: `User with id=${id} not found` });
 
-        if (error) {
+                return;
+            }
+
+            response.json(user);
+        } catch (error) {
             next(error);
             return;
         }
-
-        if (!user) {
-            response
-                .status(StatusCodesEnum.NotFound)
-                .json({ message: `User with id=${id} not found` });
-
-            return;
-        }
-
-        response.json(user);
     },
 
     async handlePostUser(
@@ -41,20 +39,16 @@ const userController = {
         response: Response,
         next: NextFunction,
     ) {
-        const { user, error } = await userService.createUser(
-            login,
-            password,
-            age,
-        );
+        try {
+            const { user } = await userService.createUser(login, password, age);
 
-        if (error) {
+            response
+                .status(StatusCodesEnum.OK)
+                .json({ message: 'User sucessfully added', user });
+        } catch (error) {
             next(error);
             return;
         }
-
-        response
-            .status(StatusCodesEnum.OK)
-            .json({ message: 'User sucessfully added', user });
     },
 
     async handlePutUser(
@@ -62,26 +56,27 @@ const userController = {
         response: Response,
         next: NextFunction,
     ) {
-        const { code, error } = await userService.updateUser(
-            id,
-            login,
-            password,
-            age,
-        );
+        try {
+            const { code } = await userService.updateUser(
+                id,
+                login,
+                password,
+                age,
+            );
 
-        if (error) {
+            if (code) {
+                response.status(StatusCodesEnum.OK).json({
+                    message: `User with id=${id} sucessfully updated`,
+                });
+                return;
+            }
+
+            next(internalProblem);
+            return;
+        } catch (error) {
             next(error);
             return;
         }
-
-        if (code) {
-            response.status(StatusCodesEnum.OK).json({
-                message: `User with id=${id} sucessfully updated`,
-            });
-            return;
-        }
-
-        next(internalProblem);
     },
 
     async handleDeleteUser(
@@ -89,21 +84,22 @@ const userController = {
         response: Response,
         next: NextFunction,
     ) {
-        const { error, code } = await userService.deleteUser(id);
+        try {
+            const { code } = await userService.deleteUser(id);
 
-        if (error) {
+            if (code) {
+                response.json({
+                    message: `User with id=${id} has been successfully deleted`,
+                });
+                return;
+            }
+
+            next(internalProblem);
+            return;
+        } catch (error) {
             next(error);
             return;
         }
-
-        if (code) {
-            response.json({
-                message: `User with id=${id} has been successfully deleted`,
-            });
-            return;
-        }
-
-        next(internalProblem);
     },
 };
 
