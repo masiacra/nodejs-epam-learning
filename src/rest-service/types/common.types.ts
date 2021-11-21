@@ -1,7 +1,7 @@
 export type Id = string;
 
 export interface Table<Instance, Params> {
-    findOne(options?: object): Promise<Instance | null>;
+    findByPk(id: Id): Promise<Instance | null>;
     create(instance: Instance): Promise<Instance>;
     update(
         params: Params,
@@ -9,4 +9,9 @@ export interface Table<Instance, Params> {
     ): Promise<[number, Instance[]]>;
 
     findAll(args?: object): Promise<Instance[]>;
+}
+
+export interface TransactionInstance {
+    commit(): Promise<void>;
+    rollback(): Promise<void>;
 }

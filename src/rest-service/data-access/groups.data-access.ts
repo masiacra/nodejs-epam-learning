@@ -1,19 +1,22 @@
 import { GroupInstance } from '../types/database.types';
 import { Id, Table } from '../types/common.types';
 import { Group } from '../types/group.types';
-import { Groups } from '../config/database.config';
+import { Groups } from '../models/groups.models';
+import { UserGroup } from '../models/user-group.models';
 import {
     createFindByIdFunction,
     createFunctionToCreateInstance,
     createFunctionToUpdateInstance,
+    createFunctionToInsertRecords,
 } from './common.data-access';
 
 export class GroupError extends Error {}
 
-export const dataFindGroupById = (id: Id) =>
-    createFindByIdFunction(Groups)({ id });
+export const dataFindGroupById = createFindByIdFunction(Groups);
 
-export const dataCreateGroup = createFunctionToCreateInstance(Groups);
+export const dataCreateGroup = async (id: Id) => {
+    const result = await createFunctionToCreateInstance(Groups)(id);
+};
 
 export const dataUpdateGroup = createFunctionToUpdateInstance(Groups);
 
@@ -23,7 +26,7 @@ const createFunctionToDeleteGroup =
     (table: Table<GroupInstance, PartialGroup>) =>
     async (id: string): Promise<{ code: number; error: Error | null }> => {
         try {
-            const group = await table.findOne({ id });
+            const group = await table.findByPk(id);
 
             if (!group) {
                 return {
@@ -55,3 +58,5 @@ const createFunctionToGetAllGroups =
     };
 
 export const dataGetAllGroups = createFunctionToGetAllGroups(Groups);
+
+export const dataAddUsersToGroup = createFunctionToInsertRecords(UserGroup);

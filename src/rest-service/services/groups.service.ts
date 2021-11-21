@@ -13,7 +13,10 @@ import {
     dataUpdateGroup,
     dataDeleteGroup,
     dataGetAllGroups,
+    dataAddUsersToGroup,
 } from '../data-access/groups.data-access';
+import { sequelize } from '../config/database.config';
+import { Id } from '../types/common.types';
 
 export const findGroupService = createFindService(dataFindGroupById);
 
@@ -31,10 +34,43 @@ const createGroupParamsTransformer = ({
     };
 };
 
-export const createGroupService = createCreateService(
-    dataCreateGroup,
-    createGroupParamsTransformer,
-);
+const addUsersToGroup = async (groupId: Id, usersIds: Id[]) => {
+    const result = await dataAddUsersToGroup(
+        usersIds.map((user_id) => ({ user_id, group_id: groupId })),
+    );
+
+    return result;
+};
+
+export const createGroupService = async (params: {
+    name?: string;
+    permissions?: Permission[];
+    usersIds?: Id[];
+}) => {
+    const transaction = await sequelize.transaction();
+
+    const { resultObject, error } = await createCreateService(
+        dataCreateGroup,
+        createGroupParamsTransformer,
+    )(params);
+
+    if (error) {
+        transaction.rollback();
+        return { error };
+    }
+
+    const { error: _error } = await addUsersToGroup(
+        resultObject.id,
+        params.usersIds || [],
+    );
+
+    if (_error) {
+        transaction.rollback();
+        return { error };
+    }
+
+    return { error: null, resultObject };
+};
 
 export const updateGroupService = createUpdateService(dataUpdateGroup);
 

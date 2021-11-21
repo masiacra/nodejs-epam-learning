@@ -20,22 +20,22 @@ export const handleGetGroup = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { resultObject: group, error } = await findGroupService(id);
+    try {
+        const { resultObject: group } = await findGroupService(id);
 
-    if (error) {
+        if (!group) {
+            response
+                .status(StatusCodesEnum.NotFound)
+                .json({ message: `Group with id=${id} not found` });
+
+            return;
+        }
+
+        response.json(group);
+    } catch (error) {
         next(error);
         return;
     }
-
-    if (!group) {
-        response
-            .status(StatusCodesEnum.NotFound)
-            .json({ message: `Group with id=${id} not found` });
-
-        return;
-    }
-
-    response.json(group);
 };
 
 const handlePostGroup = async (
@@ -43,19 +43,19 @@ const handlePostGroup = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { resultObject: group, error } = await createGroupService({
-        name,
-        permissions,
-    });
+    try {
+        const { resultObject: group } = await createGroupService({
+            name,
+            permissions,
+        });
 
-    if (error) {
+        response
+            .status(StatusCodesEnum.OK)
+            .json({ message: 'Group sucessfully added', group });
+    } catch (error) {
         next(error);
         return;
     }
-
-    response
-        .status(StatusCodesEnum.OK)
-        .json({ message: 'User sucessfully added', group });
 };
 
 const handlePutGroup = async (
@@ -63,24 +63,25 @@ const handlePutGroup = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { code, error } = await updateGroupService(id, {
-        name,
-        permissions,
-    });
+    try {
+        const { code } = await updateGroupService(id, {
+            name,
+            permissions,
+        });
 
-    if (error) {
+        if (code) {
+            response.status(StatusCodesEnum.OK).json({
+                message: `Group with id=${id} sucessfully updated`,
+            });
+            return;
+        }
+
+        next(internalProblem);
+        return;
+    } catch (error) {
         next(error);
         return;
     }
-
-    if (code) {
-        response.status(StatusCodesEnum.OK).json({
-            message: `Group with id=${id} sucessfully updated`,
-        });
-        return;
-    }
-
-    next(internalProblem);
 };
 
 const handleDeleteGroup = async (
@@ -88,21 +89,22 @@ const handleDeleteGroup = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { error, code } = await deleteGroupService(id);
+    try {
+        const { code } = await deleteGroupService(id);
 
-    if (error) {
+        if (code) {
+            response.json({
+                message: `Group with id=${id} has been successfully deleted`,
+            });
+            return;
+        }
+
+        next(internalProblem);
+        return;
+    } catch (error) {
         next(error);
         return;
     }
-
-    if (code) {
-        response.json({
-            message: `Group with id=${id} has been successfully deleted`,
-        });
-        return;
-    }
-
-    next(internalProblem);
 };
 
 export const groupRouter = Router();

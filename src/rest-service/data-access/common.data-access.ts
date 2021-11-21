@@ -2,8 +2,8 @@ import { Id, Table } from '../types/common.types';
 
 export const createFindByIdFunction =
     <Instance, Params>(table: Table<Instance, Params>) =>
-    async (options?: object): Promise<{ resultObject: Instance | null }> => {
-        const resultObject = await table.findOne(options);
+    async (id: Id): Promise<{ resultObject: Instance | null }> => {
+        const resultObject = await table.findByPk(id);
 
         return { resultObject };
     };
@@ -24,4 +24,17 @@ export const createFunctionToUpdateInstance =
         });
 
         return { code: resultOfOperation };
+    };
+
+export const createFunctionToInsertRecords =
+    <Instance, Params>(table: Table<Instance, Params>) =>
+    async (instances: Instance[]) => {
+        try {
+            for (const instance of instances) {
+                await table.create(instance);
+            }
+            return { code: 1, error: null };
+        } catch (error) {
+            return { code: 0, error: error as Error };
+        }
     };

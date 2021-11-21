@@ -18,3 +18,9 @@ postgres on your computer
 4. add user by send post request to http://localhost:4000/user
 5. get, update, delete user by request GET, PUT, DELETE to http://localhost:4000/user
 6. to see all list of users use GET request to http://localhost:4000/users
+
+# Basic sql queries
+
+1. Show table: SELECT \* FROM table_name.
+2. Delete table: DROP TABLE table_name.
+3. Delete row: DELETE FROM table_name WHERE condition.

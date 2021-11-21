@@ -9,8 +9,7 @@ import {
     createFunctionToUpdateInstance,
 } from './common.data-access';
 
-export const dataFindUserById = (id: Id) =>
-    createFindByIdFunction(Users)({ id, is_deleted: false });
+export const dataFindUserById = (id: Id) => createFindByIdFunction(Users)(id);
 
 export const dataCreateUser = createFunctionToCreateInstance(Users);
 
@@ -37,5 +36,3 @@ const createGetLimitUsers =
     };
 
 export const dataGetLimitUsers = createGetLimitUsers(Users);
-
-// TODO: разобраться с опциями запроса к бд
