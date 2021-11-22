@@ -3,6 +3,7 @@ import { StatusCodesEnum } from '../types/application.types';
 import {
     USER_CREATE_SCHEME_CONFIG,
     USER_UPDATE_SCHEME_CONFIG,
+    USER_VALIDATE_SCHEME_CONFIG,
 } from '../validation/user-scheme';
 import { VALIDATE_ID_SCHEME_CONFIG } from '../validation/id-scheme';
 import { validateScheme } from '../validation/validate-scheme';
@@ -11,6 +12,7 @@ import {
     createUserService,
     updateUserService,
     deleteUserService,
+    getLimitUsersService,
 } from '../services/user.service';
 
 const internalProblem = new Error('Sorry. Some propblems with server');
@@ -108,8 +110,31 @@ export const handleDeleteUser = async (
     }
 };
 
+const handleGetUsers = async (
+    { query: { login, limit } }: Request,
+    response: Response,
+    next: NextFunction,
+) => {
+    try {
+        const { users } = await getLimitUsersService(
+            login as string,
+            Number(limit),
+        );
+
+        response.json({ users });
+    } catch (error) {
+        next(error);
+        return;
+    }
+};
+
 export const userRouter = Router();
 
+userRouter.get(
+    '/users',
+    validateScheme(USER_VALIDATE_SCHEME_CONFIG),
+    handleGetUsers,
+);
 userRouter.get(
     '/:id',
     validateScheme(VALIDATE_ID_SCHEME_CONFIG),

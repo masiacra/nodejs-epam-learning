@@ -11,6 +11,7 @@ import {
     createGroupService,
     updateGroupService,
     deleteGroupService,
+    getAllGroupsService,
 } from '../services/groups.service';
 
 const internalProblem = new Error('Sorry. Some propblems with server');
@@ -110,8 +111,24 @@ const handleDeleteGroup = async (
     }
 };
 
+const handleGetGroups = async (
+    _: Request,
+    response: Response,
+    next: NextFunction,
+) => {
+    try {
+        const { groups } = await getAllGroupsService();
+
+        response.json(groups);
+    } catch (error) {
+        next(error);
+        return;
+    }
+};
+
 export const groupRouter = Router();
 
+groupRouter.get('/groups', handleGetGroups);
 groupRouter.get(
     '/:id',
     validateScheme(VALIDATE_ID_SCHEME_CONFIG),

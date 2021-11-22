@@ -1,8 +1,6 @@
 import express, { Application } from 'express';
 import { userRouter } from '../routers/user.router';
-import { usersRouter } from '../routers/users.router';
 import { groupRouter } from '../routers/group.router';
-import { groupsRouter } from '../routers/groups.router';
 import { handleGetMainPage } from '../routers/main.router';
 import { ROUTES } from '../config/routes.config';
 import { errorHandleMiddleware } from '../error-handling/error-handle.middleware';
@@ -13,9 +11,7 @@ export const improveApplication = (application: Application): void => {
 
     application.get(ROUTES.main, handleGetMainPage);
     application.use(ROUTES.user, userRouter);
-    application.use(ROUTES.users, usersRouter);
     application.use(ROUTES.group, groupRouter);
-    application.use(ROUTES.groups, groupsRouter);
 
     application.use(errorHandleMiddleware);
 };

@@ -17,6 +17,15 @@ export const userUpdateScheme = Joi.object()
     })
     .or('age', 'login', 'password');
 
+export const usersScheme = Joi.object().keys({
+    login: Joi.string().required(),
+    limit: Joi.number(),
+});
+
+export const USER_VALIDATE_SCHEME_CONFIG: QueryValidateScheme[] = [
+    ['query', usersScheme],
+];
+
 export const USER_CREATE_SCHEME_CONFIG: QueryValidateScheme[] = [
     ['body', userCreateScheme],
 ];
