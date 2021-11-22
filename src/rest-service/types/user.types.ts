@@ -1,4 +1,4 @@
-export type Id = string;
+import { Id } from './common.types';
 
 export interface User {
     id: Id;
@@ -7,3 +7,5 @@ export interface User {
     age: number;
     isDeleted: boolean;
 }
+
+export type PartialUser = Partial<User>;

@@ -22,3 +22,5 @@ export const sequelize = new Sequelize(
         },
     },
 );
+
+export const createTransaction = sequelize.transaction.bind(sequelize);

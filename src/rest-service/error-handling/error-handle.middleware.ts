@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ValidationErrorItem, ValidationError } from 'joi';
 import { UniqueConstraintError } from 'sequelize';
+import { GroupError } from '../data-access/groups.data-access';
 import { StatusCodesEnum } from '../types/application.types';
 
 const getErrorResponseObject = (shemaErrors: ValidationErrorItem[]) => {
@@ -20,6 +21,8 @@ export const errorHandleMiddleware = (
     response: Response,
     next: NextFunction,
 ) => {
+    console.log('error', error);
+
     if (response.headersSent) {
         return next(error);
     }
@@ -35,12 +38,18 @@ export const errorHandleMiddleware = (
     if (error instanceof UniqueConstraintError) {
         response
             .status(StatusCodesEnum.Conflict)
-            .json({ message: 'User with appropriate id is already exists' });
+            .json({ message: error.message });
 
         return;
     }
 
+    if (error instanceof GroupError) {
+        response
+            .status(StatusCodesEnum.BadRequest)
+            .json({ message: error.message });
+    }
+
     response
         .status(StatusCodesEnum.InternalServerError)
-        .json({ message: 'Sorry, some problems with server' });
+        .json({ message: error.message });
 };
