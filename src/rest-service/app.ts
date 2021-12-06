@@ -2,6 +2,7 @@ import express from 'express';
 import { PORT } from './config/application.config';
 import { sequelize } from './config/database.config';
 import { improveApplication } from './loaders/application.loader';
+import { logger } from './config/logger.config';
 
 const main = async () => {
     const application = express();
@@ -26,4 +27,16 @@ main();
 
 process.on('SIGTERM', () => {
     sequelize.close();
+});
+
+process.on('uncaughtException', (error) => {
+    logger.error(error);
+    sequelize.close();
+    process.exit(2);
+});
+
+process.on('unhandledRejection', (error) => {
+    logger.error(error);
+    sequelize.close();
+    process.exit(3);
 });

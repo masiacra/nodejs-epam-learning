@@ -22,7 +22,7 @@ const createGetLimitUsers =
         limit: number,
     ): Promise<{ users: UserAttributes[] }> => {
         const users = await table.findAll({
-            where: { login: { [Op.startsWith]: login, is_deleted: false } },
+            where: { login: { [Op.startsWith]: login }, is_deleted: false },
             limit,
         });
 
