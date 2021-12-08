@@ -16,7 +16,7 @@ import { getLoggedFunction } from '../helpers/logging.helpers';
 
 export const groupRouter = Router();
 
-groupRouter.get('/groups', getLoggedFunction(handleGetGroups));
+groupRouter.get('/', getLoggedFunction(handleGetGroups));
 groupRouter.get(
     '/:id',
     validateScheme(VALIDATE_ID_SCHEME_CONFIG),

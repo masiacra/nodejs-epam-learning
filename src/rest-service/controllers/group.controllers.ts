@@ -12,6 +12,7 @@ import { internalProblem } from '../config/application.config';
 export const handleGetGroup = async (
     { params: { id } }: Request,
     response: Response,
+    next: NextFunction,
 ) => {
     const { group } = await findGroupService(id);
 
@@ -19,11 +20,12 @@ export const handleGetGroup = async (
         response
             .status(StatusCodesEnum.NotFound)
             .json({ message: `Group with id=${id} not found` });
-
+        next();
         return;
     }
 
     response.json(group);
+    next();
     return;
 };
 
@@ -87,9 +89,14 @@ export const handleDeleteGroup = async (
     return;
 };
 
-export const handleGetGroups = async (_: Request, response: Response) => {
+export const handleGetGroups = async (
+    _: Request,
+    response: Response,
+    next: NextFunction,
+) => {
     const { groups } = await getAllGroupsService();
 
     response.json(groups);
+    next();
     return;
 };

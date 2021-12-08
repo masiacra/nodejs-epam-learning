@@ -12,8 +12,8 @@ export const improveApplication = (application: Application): void => {
     application.use(loggingMiddleware);
 
     application.get(ROUTES.main, handleGetMainPage);
-    application.use(ROUTES.user, userRouter);
-    application.use(ROUTES.group, groupRouter);
+    application.use(ROUTES.users, userRouter);
+    application.use(ROUTES.groups, groupRouter);
 
     application.use(errorHandleMiddleware);
 };

@@ -18,7 +18,7 @@ import { getLoggedFunction } from '../helpers/logging.helpers';
 export const userRouter = Router();
 
 userRouter.get(
-    '/users',
+    '/',
     validateScheme(USER_VALIDATE_SCHEME_CONFIG),
     getLoggedFunction(handleGetUsers),
 );

@@ -1,5 +1,5 @@
 export enum ROUTES {
     main = '/',
-    user = '/user',
-    group = '/group',
+    users = '/users',
+    groups = '/groups',
 }

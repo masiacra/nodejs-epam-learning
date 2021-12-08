@@ -12,6 +12,7 @@ import { internalProblem } from '../config/application.config';
 export const handleGetUser = async (
     { params: { id } }: Request,
     response: Response,
+    next: NextFunction,
 ): Promise<void> => {
     const { user } = await findUserService(id);
 
@@ -24,7 +25,7 @@ export const handleGetUser = async (
     }
 
     response.json(user);
-
+    next();
     return;
 };
 
@@ -90,6 +91,7 @@ export const handleDeleteUser = async (
 export const handleGetUsers = async (
     { query: { login, limit } }: Request,
     response: Response,
+    next: NextFunction,
 ) => {
     const { users } = await getLimitUsersService(
         login as string,
@@ -97,5 +99,6 @@ export const handleGetUsers = async (
     );
 
     response.json({ users });
+    next();
     return;
 };
