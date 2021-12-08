@@ -3,6 +3,7 @@ import { ValidationErrorItem, ValidationError } from 'joi';
 import { UniqueConstraintError } from 'sequelize';
 import { GroupError } from '../data-access/groups.data-access';
 import { StatusCodesEnum } from '../types/application.types';
+import { logger } from '../config/logger.config';
 
 const getErrorResponseObject = (shemaErrors: ValidationErrorItem[]) => {
     const errors = shemaErrors.map((error) => ({
@@ -21,8 +22,6 @@ export const errorHandleMiddleware = (
     response: Response,
     next: NextFunction,
 ) => {
-    console.log('error', error);
-
     if (response.headersSent) {
         return next(error);
     }
@@ -47,7 +46,10 @@ export const errorHandleMiddleware = (
         response
             .status(StatusCodesEnum.BadRequest)
             .json({ message: error.message });
+        return;
     }
+
+    logger.error(error);
 
     response
         .status(StatusCodesEnum.InternalServerError)
