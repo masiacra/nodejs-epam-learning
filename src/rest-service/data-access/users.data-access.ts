@@ -2,12 +2,13 @@ import { Op } from 'sequelize';
 import { UserAttributes, UserInstance } from '../types/database.types';
 import { Users } from '../models/user.models';
 import { Table } from '../types/common.types';
-import { PartialUser } from '../types/user.types';
+import { PartialUser, User } from '../types/user.types';
 import {
     createFunctionFindByIdInstance,
     createFunctionToCreateInstance,
     createFunctionToUpdateInstance,
 } from './common.data-access';
+import { fromDataAccess } from '../mappers/user.mapper';
 
 export const dataFindUserById = createFunctionFindByIdInstance(Users);
 
@@ -30,3 +31,13 @@ const createGetLimitUsers =
     };
 
 export const dataGetLimitUsers = createGetLimitUsers(Users);
+
+const createFindUserByLogin =
+    (table: Table<UserInstance, PartialUser>) =>
+    async (login: string): Promise<User | null> => {
+        const user = await table.findOne({ where: { login } });
+
+        return !!user ? fromDataAccess(user) : null;
+    };
+
+export const findUserByLogin = createFindUserByLogin(Users);

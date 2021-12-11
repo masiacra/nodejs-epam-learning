@@ -11,14 +11,14 @@ const main = async () => {
 
     try {
         await sequelize.authenticate();
-        console.log(
+        logger.info(
             'Connection with database has been established sucessfully.',
         );
         application.listen(PORT, () =>
-            console.log(`server is running on port ${PORT}`),
+            logger.info(`server is running on port ${PORT}`),
         );
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        logger.error('Unable to connect to the database:', error);
         process.exit(1);
     }
 };

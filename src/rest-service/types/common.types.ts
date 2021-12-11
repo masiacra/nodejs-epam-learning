@@ -18,4 +18,5 @@ export interface Table<Instance, Params> {
     ): Promise<[number, Instance[]]>;
 
     findAll(args?: object): Promise<Instance[]>;
+    findOne(options: object): Promise<Instance | null>;
 }

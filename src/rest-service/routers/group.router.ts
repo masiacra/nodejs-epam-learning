@@ -13,8 +13,11 @@ import {
     handlePutGroup,
 } from '../controllers/group.controllers';
 import { getLoggedFunction } from '../helpers/logging.helpers';
+import { loginMiddleware } from '../middlewares/login.middleware';
 
 export const groupRouter = Router();
+
+groupRouter.use(loginMiddleware);
 
 groupRouter.get('/', getLoggedFunction(handleGetGroups));
 groupRouter.get(

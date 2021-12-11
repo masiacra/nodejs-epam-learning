@@ -7,7 +7,7 @@ import {
     deleteGroupService,
     getAllGroupsService,
 } from '../services/groups.service';
-import { internalProblem } from '../config/application.config';
+import { INTERNAL_PROBLEM } from '../config/application.config';
 
 export const handleGetGroup = async (
     { params: { id } }: Request,
@@ -66,7 +66,7 @@ export const handlePutGroup = async (
         return;
     }
 
-    next(internalProblem);
+    next(INTERNAL_PROBLEM);
     return;
 };
 
@@ -85,7 +85,7 @@ export const handleDeleteGroup = async (
         return;
     }
 
-    next(internalProblem);
+    next(INTERNAL_PROBLEM);
     return;
 };
 
