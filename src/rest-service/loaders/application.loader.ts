@@ -1,4 +1,5 @@
 import express, { Application } from 'express';
+import cors from 'cors';
 import { userRouter } from '../routers/user.router';
 import { groupRouter } from '../routers/group.router';
 import { handleGetMainPage } from '../routers/main.router';
@@ -10,6 +11,7 @@ import { handlGetLogin } from '../routers/login.router';
 export const improveApplication = (application: Application): void => {
     application.use(express.json());
     application.use(express.urlencoded({ extended: true }));
+    application.use(cors());
     application.use(loggingMiddleware);
 
     application.get(ROUTES.main, handleGetMainPage);
