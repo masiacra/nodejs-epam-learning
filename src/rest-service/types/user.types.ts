@@ -9,3 +9,5 @@ export interface User {
 }
 
 export type PartialUser = Partial<User>;
+
+export type PickedUser = Pick<User, 'login' | 'password' | 'age'>;
