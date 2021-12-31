@@ -8,7 +8,7 @@ export const handleGetTokenService = async (
     const user = await findUserByLogin(login);
 
     if (user && user.password === password && !user.isDeleted) {
-        return sign({ login, password }, process.env.SECRET as string);
+        return sign({ login }, process.env.SECRET as string);
     }
 
     return null;
