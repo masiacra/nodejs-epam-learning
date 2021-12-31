@@ -7,7 +7,7 @@ import {
     deleteUserService,
     getLimitUsersService,
 } from '../services/user.service';
-import { internalProblem } from '../config/application.config';
+import { INTERNAL_PROBLEM } from '../config/application.config';
 
 export const handleGetUser = async (
     { params: { id } }: Request,
@@ -65,7 +65,7 @@ export const handlePutUser = async (
         return;
     }
 
-    next(internalProblem);
+    next(INTERNAL_PROBLEM);
     return;
 };
 
@@ -84,7 +84,7 @@ export const handleDeleteUser = async (
         return;
     }
 
-    next(internalProblem);
+    next(INTERNAL_PROBLEM);
     return;
 };
 

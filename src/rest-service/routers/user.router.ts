@@ -14,8 +14,11 @@ import {
     handlePutUser,
 } from '../controllers/user.controllers';
 import { getLoggedFunction } from '../helpers/logging.helpers';
+import { loginMiddleware } from '../middlewares/login.middleware';
 
 export const userRouter = Router();
+
+userRouter.use(loginMiddleware);
 
 userRouter.get(
     '/',
