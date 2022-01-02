@@ -96,7 +96,7 @@ export const handleGetGroups = async (
 ) => {
     const { groups } = await getAllGroupsService();
 
-    response.json(groups);
+    response.status(StatusCodesEnum.OK).json(groups);
     next();
     return;
 };

@@ -1,6 +1,7 @@
 import {
     handleDeleteGroup,
     handleGetGroup,
+    handleGetGroups,
     handlePostGroup,
     handlePutGroup,
 } from '../group.controllers';
@@ -166,6 +167,25 @@ describe('Group controllers methods', () => {
                 mockByJestNext,
             );
             expect(mockByJestNext).toHaveBeenCalledWith(INTERNAL_PROBLEM);
+        });
+    });
+    describe(handleGetGroups.name, () => {
+        const mockGroupService = jest.spyOn(
+            groupsService,
+            'getAllGroupsService',
+        );
+        mockGroupService.mockImplementation(async () => {
+            return { groups: [MOCK_GROUP] };
+        });
+        it(`should return groups and status code ${StatusCodesEnum.OK}`, async () => {
+            const response = getMockResponse();
+            await handleGetGroups(
+                getMockGetGroupRequest(MOCK_GROUP_ID),
+                response,
+                mockNext,
+            );
+            expect(response.status).toHaveBeenCalledWith(StatusCodesEnum.OK);
+            expect(response.json).toHaveBeenCalledWith([MOCK_GROUP]);
         });
     });
 });
