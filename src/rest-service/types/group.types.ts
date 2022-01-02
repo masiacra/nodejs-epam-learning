@@ -15,3 +15,16 @@ export interface Group {
 }
 
 export type PartialGroup = Partial<Group>;
+
+export interface CreateGroupServiceProps {
+    name: string;
+    permissions: Permission[];
+    usersIds?: Id[];
+}
+
+export interface UpdateGroupServiceProps {
+    id: Id;
+    name?: string;
+    permissions?: Permission[];
+    usersIds?: Id[];
+}
