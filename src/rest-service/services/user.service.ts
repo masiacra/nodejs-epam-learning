@@ -7,10 +7,9 @@ import {
 } from '../data-access/users.data-access';
 import { DEFAULT_LIMIT } from '../config/application.config';
 import { toDataAccess, fromDataAccess } from '../mappers/user.mapper';
-import { User } from '../types/user.types';
-import { UserAttributes, PartialUserAttributes } from '../types/database.types';
+import { User, PickedUser } from '../types/user.types';
+import { PartialUserAttributes } from '../types/database.types';
 
-// TODO: make all functions more abstract
 export const findUserService = async (
     id: Id,
 ): Promise<{ user: User | null }> => {
@@ -21,9 +20,7 @@ export const findUserService = async (
         : { user: null };
 };
 
-export const createUserService = async (
-    params: Pick<User, 'login' | 'password' | 'age'>,
-) => {
+export const createUserService = async (params: PickedUser) => {
     const user = toDataAccess(params);
 
     await dataCreateUser(user);
@@ -46,22 +43,10 @@ export const deleteUserService = async (id: Id) => {
     return result;
 };
 
-const createGetLimitUsers =
-    (
-        dataAccessFunction: (
-            login: string,
-            limit: number,
-        ) => Promise<{ users: UserAttributes[] }>,
-    ) =>
-    async (login: string, limit?: number) => {
-        const { users } = await dataAccessFunction(
-            login,
-            limit || DEFAULT_LIMIT,
-        );
+export const getLimitUsersService = async (login: string, limit?: number) => {
+    const { users } = await dataGetLimitUsers(login, limit || DEFAULT_LIMIT);
 
-        return {
-            users: users.map((user) => fromDataAccess(user)),
-        };
+    return {
+        users: users.map((user) => fromDataAccess(user)),
     };
-
-export const getLimitUsersService = createGetLimitUsers(dataGetLimitUsers);
+};

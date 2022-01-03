@@ -20,11 +20,11 @@ export const handleGetUser = async (
         response
             .status(StatusCodesEnum.NotFound)
             .json({ message: `User with id=${id} not found` });
-
+        next();
         return;
     }
 
-    response.json(user);
+    response.status(StatusCodesEnum.OK).json(user);
     next();
     return;
 };
@@ -62,6 +62,7 @@ export const handlePutUser = async (
         response.status(StatusCodesEnum.OK).json({
             message: `User with id=${id} sucessfully updated`,
         });
+        next();
         return;
     }
 
@@ -77,7 +78,7 @@ export const handleDeleteUser = async (
     const { code } = await deleteUserService(id);
 
     if (code) {
-        response.json({
+        response.status(StatusCodesEnum.OK).json({
             message: `User with id=${id} has been successfully deleted`,
         });
         next();
@@ -98,7 +99,7 @@ export const handleGetUsers = async (
         Number(limit),
     );
 
-    response.json({ users });
+    response.status(StatusCodesEnum.OK).json({ users });
     next();
     return;
 };

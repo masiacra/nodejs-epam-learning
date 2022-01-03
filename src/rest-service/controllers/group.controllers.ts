@@ -24,7 +24,7 @@ export const handleGetGroup = async (
         return;
     }
 
-    response.json(group);
+    response.status(StatusCodesEnum.OK).json(group);
     next();
     return;
 };
@@ -78,7 +78,7 @@ export const handleDeleteGroup = async (
     const { code } = await deleteGroupService(id);
 
     if (code) {
-        response.json({
+        response.status(StatusCodesEnum.OK).json({
             message: `Group with id=${id} has been successfully deleted`,
         });
         next();
@@ -96,7 +96,7 @@ export const handleGetGroups = async (
 ) => {
     const { groups } = await getAllGroupsService();
 
-    response.json(groups);
+    response.status(StatusCodesEnum.OK).json(groups);
     next();
     return;
 };

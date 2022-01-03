@@ -1,6 +1,10 @@
 import { randomUUID } from 'crypto';
-import { Group, PartialGroup } from '../types/group.types';
-import { Permission } from '../types/group.types';
+import { Group } from '../types/group.types';
+import {
+    Permission,
+    CreateGroupServiceProps,
+    UpdateGroupServiceProps,
+} from '../types/group.types';
 import {
     dataFindGroupById,
     dataDeleteGroup,
@@ -37,11 +41,7 @@ export const createGroupService = async ({
     name,
     permissions,
     usersIds,
-}: {
-    name: string;
-    permissions: Permission[];
-    usersIds?: Id[];
-}) => {
+}: CreateGroupServiceProps) => {
     const group = createGroup({ name, permissions });
 
     const { resultObject } = await dataCreateGroupWithTransaction(
@@ -57,7 +57,7 @@ export const updateGroupService = async ({
     name,
     permissions,
     usersIds,
-}: PartialGroup & { usersIds?: Id[]; id: Id }) => {
+}: UpdateGroupServiceProps) => {
     const result = await dataUpdateGroupWithTransaction(
         {
             id,

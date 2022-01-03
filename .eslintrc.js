@@ -1,10 +1,11 @@
 module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint', 'prettier'],
+    plugins: ['jest', '@typescript-eslint', 'prettier'],
     extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
     env: {
         node: true,
+        'jest/globals': true,
     },
     parserOptions: {
         ecmaFeatures: {
